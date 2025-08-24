@@ -16,6 +16,9 @@ if (VCPKG_TARGET_IS_EMSCRIPTEN)
 
    set(OPTIONAL_DUCKDB_PATCHES "${ADDITIONAL_PATCHES} static_link_only.patch")
 endif()
+if (VCPKG_TARGET_IS_ANDROID)
+    list(APPEND OPTIONAL_DUCKDB_PATCHES fix-android-bswap.patch)
+endif()
 separate_arguments(OPTIONAL_DUCKDB_PATCHES)
 
 vcpkg_from_github(

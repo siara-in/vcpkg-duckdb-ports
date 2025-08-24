@@ -1,0 +1,38 @@
+diff --git a/lang/c/src/codec.c b/lang/c/src/codec.c
+index 9e53cfa..0000000 100644
+--- a/lang/c/src/codec.c
++++ b/lang/c/src/codec.c
+@@ -43,6 +43,15 @@
+ 
+ #define DEFAULT_BLOCK_SIZE	(16 * 1024)
+ 
++#include <stdint.h>
++
++static inline uint32_t avro_bswap_32(uint32_t x) {
++    return ((x >> 24) & 0x000000FF) |
++           ((x >> 8)  & 0x0000FF00) |
++           ((x << 8)  & 0x00FF0000) |
++           ((x << 24) & 0xFF000000);
++}
++
+ /* NULL codec */
+ 
+ static int
+@@ -127,7 +136,7 @@ static int encode_snappy(avro_codec_t c, void * data, int64_t len)
+ 		return 1;
+ 	}
+ 
+-        crc = __bswap_32(crc32(0, (const Bytef *)data, len));
++        crc = avro_bswap_32(crc32(0, (const Bytef *)data, len));
+         memcpy((char*)c->block_data+outlen, &crc, 4);
+         c->used_size = outlen+4;
+ 
+@@ -164,7 +173,7 @@ static int decode_snappy(avro_codec_t c, void * data, int64_t len)
+ 		return 1;
+ 	}
+ 
+-        crc = __bswap_32(crc32(0, (const Bytef *)c->block_data, outlen));
++        crc = avro_bswap_32(crc32(0, (const Bytef *)c->block_data, outlen));
+         if (memcmp(&crc, (char*)data+len-4, 4))
+         {
+                 avro_set_error("CRC32 check failure uncompressing block with Snappy");
