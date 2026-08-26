@@ -19,6 +19,9 @@ endif()
 if (VCPKG_TARGET_IS_ANDROID)
     list(APPEND OPTIONAL_DUCKDB_PATCHES fix-android-bswap.patch)
 endif()
+if (VCPKG_TARGET_IS_IOS)
+    list(APPEND OPTIONAL_DUCKDB_PATCHES disable_avro_tools_ios.patch)
+endif()
 separate_arguments(OPTIONAL_DUCKDB_PATCHES)
 
 vcpkg_from_github(
@@ -28,6 +31,7 @@ vcpkg_from_github(
     SHA512 ffafc3617f032583d8e08ae933009936c8b49b0a9708fefa58462915b185b0f402a741be460a107db4bc5c4467cdfb6b452ea29668f4b609d79c4f20947f123e
     PATCHES
         ${OPTIONAL_DUCKDB_PATCHES}
+        disable_avro_tools_ios.patch
 )
 
 vcpkg_from_github(
@@ -38,6 +42,7 @@ vcpkg_from_github(
     HEAD_REF master
     PATCHES
         ${OPTIONAL_DUCKDB_PATCHES}
+        disable_avro_tools_ios.patch
 )
 
 vcpkg_cmake_configure(
